@@ -1,23 +1,25 @@
 const { request, response } = require('express')
 const express = require('express')
 const app = express()
+const cors = require("cors")
 
-var morgan = require('morgan')
-morgan.token('body', function (req, res) { return JSON.stringify(req.body)})
-const customMorganFunc = (tokens, req, res) => {
-    console.log(tokens)
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      tokens.res(req, res, 'content-length'), '-',
-      tokens['response-time'](req, res), 'ms',
-      tokens.body(req, res)
-    ].join(' ')
-}
+// var morgan = require('morgan')
+// morgan.token('body', function (req, res) { return JSON.stringify(req.body)})
+// const customMorganFunc = (tokens, req, res) => {
+//     return [
+//       tokens.method(req, res),
+//       tokens.url(req, res),
+//       tokens.status(req, res),
+//       tokens.res(req, res, 'content-length'), '-',
+//       tokens['response-time'](req, res), 'ms',
+//       tokens.body(req, res)
+//     ].join(' ')
+// }
 
+app.use(express.static('build'))
+app.use(cors())
 app.use(express.json())
-app.use(morgan(customMorganFunc, "immediate"))
+// app.use(morgan(customMorganFunc, "immediate"))
 
 let persons = [
     { 
@@ -112,6 +114,6 @@ app.post('/api/persons', (request, response) => {
     response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 8080
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
